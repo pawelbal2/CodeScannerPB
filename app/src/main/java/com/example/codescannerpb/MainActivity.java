@@ -17,19 +17,26 @@ import android.view.View;
 import com.google.zxing.Result;
 
 
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
 
     private CodeScanner mCodeScanner;
+    ListView lstSkany = null;
+    ArrayList<String> arrSkany = new ArrayList<>();
+    ArrayAdapter arrayAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("PB","krok1");
+        lstSkany = (ListView)findViewById(R.id.lstSkany);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback()
@@ -42,7 +49,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run()
                     {
-                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+                        NaZeskanowanieKodu(result);
                     }
                 });
             }
@@ -55,6 +63,16 @@ public class MainActivity extends AppCompatActivity
                 mCodeScanner.startPreview();
             }
         });
+
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1,arrSkany);
+        lstSkany.setAdapter(arrayAdapter);
+    }
+
+    private void NaZeskanowanieKodu(Result result)
+    {
+        arrSkany.add( result.getText());
+        arrayAdapter.notifyDataSetChanged();
+       // mCodeScanner.startPreview();
     }
 
     @Override
